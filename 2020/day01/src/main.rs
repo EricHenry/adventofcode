@@ -41,15 +41,14 @@ fn solution2(xs: &Vec<i32>) {
     let mut ys = xs.clone();
     let mut zs = xs.clone();
     zs.rotate_right(1);
-    loop {
+    for x in xs {
         ys.rotate_right(1);
         zs.rotate_right(1);
-        let res: Vec<_> = xs
+        let res: Vec<_> = ys
             .iter()
-            .zip(ys.iter())
             .zip(zs.iter())
-            .filter(|((&x, &y), &z)| x + y + z == 2020)
-            .map(|((&x, &y), &z)| x * y * z)
+            .filter(|(&y, &z)| x + y + z == 2020)
+            .map(|(&y, &z)| x * y * z)
             .collect();
 
         if !res.is_empty() {
