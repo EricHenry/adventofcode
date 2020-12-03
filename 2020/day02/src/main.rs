@@ -13,6 +13,21 @@ use std::io::{BufRead, BufReader, Error};
  *
  *
  */
+fn process(line: String) -> (usize, usize, String, String) {
+    let entry: Vec<&str> = line.split(" ").collect();
+    let policy = entry[0];
+    let key = entry[1].replace(':', "");
+    let password = entry[2];
+    let range: Vec<usize> = policy
+        .split("-")
+        .map(|x| x.parse::<usize>().unwrap())
+        .collect();
+    let min = range[0];
+    let max = range[1];
+
+    (min, max, key, password.to_owned())
+}
+
 fn solution_1() -> Result<(), Error> {
     let file = File::open("input.txt")?;
     let reader = BufReader::new(file);
@@ -22,16 +37,7 @@ fn solution_1() -> Result<(), Error> {
         if l.is_empty() {
             continue;
         }
-        let entry: Vec<&str> = l.split(" ").collect();
-        let policy = entry[0];
-        let key = entry[1].replace(':', "");
-        let password = entry[2];
-        let range: Vec<usize> = policy
-            .split("-")
-            .map(|x| x.parse::<usize>().unwrap())
-            .collect();
-        let min = range[0];
-        let max = range[1];
+        let (min, max, key, password) = process(l);
         let key_count = password
             .chars()
             .filter(|&x| x.to_string() == key)
@@ -73,18 +79,10 @@ fn solution_2() -> Result<(), Error> {
         if l.is_empty() {
             continue;
         }
-        let entry: Vec<&str> = l.split(" ").collect();
-        let policy = entry[0];
-        let key = entry[1].replace(':', "");
-        let password: Vec<char> = entry[2].chars().collect();
-        let range: Vec<usize> = policy
-            .split("-")
-            .map(|x| x.parse::<usize>().unwrap())
-            .collect();
-        let p1 = range[0] - 1;
-        let p2 = range[1] - 1;
-        let elem_1 = password[p1].to_string();
-        let elem_2 = password[p2].to_string();
+        let (min, max, key, password) = process(l);
+        let password_chars: Vec<char> = password.chars().collect();
+        let elem_1 = password_chars[min - 1].to_string();
+        let elem_2 = password_chars[max - 1].to_string();
         match (elem_1 == key, elem_2 == key) {
             (true, false) => hits += 1,
             (false, true) => hits += 1,
